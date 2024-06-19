@@ -1,24 +1,29 @@
-// 🐨 you'll need to import react and createRoot from react-dom up here
 import {createRoot} from 'react-dom/client'
-import React from 'react'
-// 🐨 you'll also need to import the Logo component from './components/logo'
+import React, {useState} from 'react'
+import '@reach/dialog/styles.css'
+import {Dialog} from '@reach/dialog'
 import {Logo} from './components/logo'
 
-// 🐨 create an App component here and render the logo, the title ("Bookshelf"), a login button, and a register button.
-// 🐨 for fun, you can add event handlers for both buttons to alert that the button was clicked
-
 const App = () => {
+  const [openModal, setOpenModal] = useState('none')
+
+  const close = () => setOpenModal('none')
   return (
     <div>
       <Logo />
       <h2>Bookshelf</h2>
-      <button>Login</button>
-      <button>Register</button>
+      <button onClick={() => setOpenModal('login')}>Login</button>
+      <button onClick={() => setOpenModal('register')}>Register</button>
+      <Dialog isOpen={openModal === 'login'} onDismiss={close}>
+        <p>Login dialog</p>
+      </Dialog>
+      <Dialog isOpen={openModal === 'register'} onDismiss={close}>
+        <p>register dialog</p>
+      </Dialog>
     </div>
   )
 }
-// 🐨 use createRoot to render the <App /> to the root element
-// 💰 find the root element with: document.getElementById('root')
+
 const root = createRoot(document.getElementById('root'))
 root.render(<App />)
 export {root}
