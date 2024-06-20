@@ -3,10 +3,13 @@ import React, {useState} from 'react'
 import '@reach/dialog/styles.css'
 import {Dialog} from '@reach/dialog'
 import {Logo} from './components/logo'
+import {LoginForm} from './components/form'
 
 const App = () => {
   const [openModal, setOpenModal] = useState('none')
-
+  const onSubmit = formData => {
+    console.log('Login', formData)
+  }
   const close = () => setOpenModal('none')
   return (
     <div>
@@ -16,6 +19,7 @@ const App = () => {
       <button onClick={() => setOpenModal('register')}>Register</button>
       <Dialog isOpen={openModal === 'login'} onDismiss={close}>
         <p>Login dialog</p>
+        <LoginForm onSubmit={onSubmit} buttonText="Login" />
       </Dialog>
       <Dialog isOpen={openModal === 'register'} onDismiss={close}>
         <p>register dialog</p>
