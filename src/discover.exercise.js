@@ -3,14 +3,17 @@ import {jsx} from '@emotion/core'
 import {useEffect, useState} from 'react'
 import './bootstrap'
 import Tooltip from '@reach/tooltip'
-import {FaSearch} from 'react-icons/fa'
+import {FaSearch, FaTimes} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
 import {client} from './utils/api-client'
+import * as colors from 'styles/colors'
 
 function DiscoverBooksScreen() {
   // 🐨 add state for status ('idle', 'loading', or 'success'), data, and query
   const [status, setStatus] = useState('')
+  const [isError, setIsError] = useState(false)
+  const [error, setError] = useState()
   const [data, setData] = useState('')
   const [query, setQuery] = useState('')
   // 🐨 you'll also notice that we don't want to run the search until the
@@ -35,8 +38,11 @@ function DiscoverBooksScreen() {
         )
         setData(response)
         setStatus('success')
+        setIsError(false)
       } catch (e) {
         console.error(e)
+        setIsError(true)
+        setError(e)
       } finally {
         setStatus('success')
       }
@@ -81,13 +87,24 @@ function DiscoverBooksScreen() {
                 background: 'transparent',
               }}
             >
-              {isLoading ? <Spinner /> : <FaSearch aria-label="search" />}
+              {isLoading ? (
+                <Spinner />
+              ) : isError ? (
+                <FaTimes aria-label="error" css={{color: colors.danger}} />
+              ) : (
+                <FaSearch aria-label="search" />
+              )}
             </button>
           </label>
         </Tooltip>
       </form>
-
-      {isSuccess ? (
+      {isError ? (
+        <div css={{color: colors.danger}}>
+          <p>There was an error:</p>
+          <pre>{error.message}</pre>
+        </div>
+      ) : null}
+      {isSuccess && !isError ? (
         data?.books?.length ? (
           <BookListUL css={{marginTop: 20}}>
             {data.books.map(book => (
