@@ -6,11 +6,28 @@ import * as React from 'react'
 import * as auth from 'auth-provider'
 import {AuthenticatedApp} from './authenticated-app'
 import {UnauthenticatedApp} from './unauthenticated-app'
+import {client} from 'utils/api-client.extra-1'
 
 function App() {
   // 🐨 useState for the user
   const [user, setUser] = React.useState()
   // 🐨 create a login function that calls auth.login then sets the user
+
+  React.useEffect(() => {
+    const getTokenAndFetchUser = async () => {
+      try {
+        const token = await auth.getToken()
+        if (token) {
+          const data = await client('me', {token})
+          setUser(data.user)
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error)
+      }
+    }
+
+    getTokenAndFetchUser()
+  }, [])
 
   const login = form => auth.login(form).then(u => setUser(u))
 
